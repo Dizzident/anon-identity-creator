@@ -12,6 +12,7 @@ describe('IdentityList', () => {
       publicKey: 'publicKey1',
       privateKey: 'privateKey1',
       createdAt: new Date('2024-01-01'),
+      attributes: {}
     },
     {
       id: '2',
@@ -19,6 +20,7 @@ describe('IdentityList', () => {
       publicKey: 'publicKey2',
       privateKey: 'privateKey2',
       createdAt: new Date('2024-01-02'),
+      attributes: {}
     },
   ]
 

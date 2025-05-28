@@ -10,6 +10,12 @@ describe('IdentityCard', () => {
     publicKey: 'dGVzdC1wdWJsaWMta2V5LXRoYXQtaXMtbG9uZy1lbm91Z2gtdG8tYmUtdHJ1bmNhdGVk',
     privateKey: 'dGVzdC1wcml2YXRlLWtleQ==',
     createdAt: new Date('2024-01-01T00:00:00Z'),
+    attributes: {
+      givenName: 'John',
+      familyName: 'Doe',
+      email: 'john.doe@example.com',
+      isOver18: true
+    }
   }
   const mockOnDelete = jest.fn()
   const mockWriteText = jest.fn(() => Promise.resolve())

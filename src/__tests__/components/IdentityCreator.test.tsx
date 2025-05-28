@@ -25,7 +25,7 @@ describe('IdentityCreator', () => {
     render(<IdentityCreator onIdentityCreated={mockOnIdentityCreated} />)
     
     expect(screen.getByText('Create New Identity')).toBeInTheDocument()
-    expect(screen.getByLabelText('Identity Name')).toBeInTheDocument()
+    expect(screen.getByLabelText('Identity Name *')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Create Identity' })).toBeInTheDocument()
   })
 
@@ -33,7 +33,7 @@ describe('IdentityCreator', () => {
     const user = userEvent.setup()
     render(<IdentityCreator onIdentityCreated={mockOnIdentityCreated} />)
     
-    const input = screen.getByLabelText('Identity Name')
+    const input = screen.getByLabelText('Identity Name *')
     const button = screen.getByRole('button', { name: 'Create Identity' })
     
     await user.type(input, 'Test Identity')
@@ -54,26 +54,29 @@ describe('IdentityCreator', () => {
     expect(input).toHaveValue('')
   })
 
-  it('shows alert when submitting empty name', async () => {
-    const alertSpy = jest.spyOn(window, 'alert').mockImplementation()
+  it('prevents submission with empty name due to HTML5 validation', async () => {
     const user = userEvent.setup()
     
     render(<IdentityCreator onIdentityCreated={mockOnIdentityCreated} />)
     
+    const input = screen.getByLabelText('Identity Name *')
     const button = screen.getByRole('button', { name: 'Create Identity' })
+    
+    // HTML5 validation should prevent form submission with empty required field
     await user.click(button)
     
-    expect(alertSpy).toHaveBeenCalledWith('Please enter a name for the identity')
+    // The form should not submit, so onIdentityCreated should not be called
     expect(mockOnIdentityCreated).not.toHaveBeenCalled()
     
-    alertSpy.mockRestore()
+    // Check that the input has the required attribute
+    expect(input).toHaveAttribute('required')
   })
 
   it('disables form during identity creation', async () => {
     const user = userEvent.setup()
     render(<IdentityCreator onIdentityCreated={mockOnIdentityCreated} />)
     
-    const input = screen.getByLabelText('Identity Name')
+    const input = screen.getByLabelText('Identity Name *')
     const button = screen.getByRole('button', { name: 'Create Identity' })
     
     await user.type(input, 'Test Identity')
@@ -106,7 +109,7 @@ describe('IdentityCreator', () => {
     
     render(<IdentityCreator onIdentityCreated={mockOnIdentityCreated} />)
     
-    const input = screen.getByLabelText('Identity Name')
+    const input = screen.getByLabelText('Identity Name *')
     const button = screen.getByRole('button', { name: 'Create Identity' })
     
     await user.type(input, 'Test Identity')

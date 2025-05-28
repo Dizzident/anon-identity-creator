@@ -1,6 +1,4 @@
-// Wrapper for anon-identity's CryptoService to avoid bundling issues
-// This uses the Web Crypto API directly which is what anon-identity's browser version should be doing
-
+// Crypto service using Web Crypto API
 export class CryptoService {
   static async generateKeyPair(): Promise<{ publicKey: Uint8Array; privateKey: Uint8Array }> {
     // Generate an Ed25519 key pair using Web Crypto API
@@ -16,12 +14,12 @@ export class CryptoService {
       );
 
       // Export the keys
-      const publicKeyJwk = await crypto.subtle.exportKey('raw', keyPair.publicKey);
-      const privateKeyJwk = await crypto.subtle.exportKey('pkcs8', keyPair.privateKey);
+      const publicKeyRaw = await crypto.subtle.exportKey('raw', keyPair.publicKey);
+      const privateKeyPkcs8 = await crypto.subtle.exportKey('pkcs8', keyPair.privateKey);
 
       return {
-        publicKey: new Uint8Array(publicKeyJwk),
-        privateKey: new Uint8Array(privateKeyJwk)
+        publicKey: new Uint8Array(publicKeyRaw),
+        privateKey: new Uint8Array(privateKeyPkcs8)
       };
     } catch (error) {
       // Fallback to a simple random key generation for demo purposes

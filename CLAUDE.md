@@ -18,9 +18,9 @@ This is a React/TypeScript web application for creating and managing anonymous i
 
 ### Key Components:
 - **App.tsx**: Main application component that manages the state of all identities
-- **IdentityCreator**: Form component for creating new identities with public/private key pairs
-- **IdentityList**: Container component that displays all created identities
-- **IdentityCard**: Individual identity display component with key visibility toggle and copy functionality
+- **IdentityCreator**: Comprehensive form component for creating identities with configurable schema fields including personal info, contact details, and verification attributes
+- **IdentityList**: Container component that displays all created identities in a grid layout
+- **IdentityCard**: Individual identity display component with key visibility toggle, collapsible attribute section, and copy functionality
 
 ### Technology Stack:
 - React 19 with TypeScript
@@ -31,3 +31,10 @@ This is a React/TypeScript web application for creating and managing anonymous i
 - GitHub Actions for CI/CD
 
 The application uses browser's crypto.randomUUID() for generating unique IDs and stores identities in React state (no persistence). Key generation uses Web Crypto API with ECDSA P-256 curves, with a fallback to random bytes for demo purposes.
+
+### Schema Fields:
+The identity creation form includes configurable fields based on anon-identity schemas:
+- **Basic Profile**: First Name, Last Name, Date of Birth, Age Verification, Nationality, Occupation
+- **Contact Information**: Email, Phone, Street Address, City, State, Postal Code, Country
+
+All schema fields are optional and include proper validation and type handling (string, date, boolean).

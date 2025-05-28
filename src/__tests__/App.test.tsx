@@ -32,7 +32,7 @@ describe('App', () => {
     const user = userEvent.setup()
     render(<App />)
     
-    const input = screen.getByLabelText('Identity Name')
+    const input = screen.getByLabelText('Identity Name *')
     const createButton = screen.getByRole('button', { name: 'Create Identity' })
     
     await user.type(input, 'Test Identity')
@@ -50,7 +50,7 @@ describe('App', () => {
     render(<App />)
     
     // Create an identity first
-    const input = screen.getByLabelText('Identity Name')
+    const input = screen.getByLabelText('Identity Name *')
     const createButton = screen.getByRole('button', { name: 'Create Identity' })
     
     await user.type(input, 'Test Identity')
@@ -72,7 +72,7 @@ describe('App', () => {
     const user = userEvent.setup()
     render(<App />)
     
-    const input = screen.getByLabelText('Identity Name')
+    const input = screen.getByLabelText('Identity Name *')
     const createButton = screen.getByRole('button', { name: 'Create Identity' })
     
     // Create first identity

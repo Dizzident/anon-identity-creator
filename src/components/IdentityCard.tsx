@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Identity } from '../types/identity'
+import { ENHANCED_SCHEMA } from '../utils/anonIdentity'
 import './IdentityCard.css'
 
 interface IdentityCardProps {
@@ -9,6 +10,7 @@ interface IdentityCardProps {
 
 function IdentityCard({ identity, onDelete }: IdentityCardProps) {
   const [showPrivateKey, setShowPrivateKey] = useState(false)
+  const [showAttributes, setShowAttributes] = useState(false)
   const [copied, setCopied] = useState<string | null>(null)
 
   const handleCopy = async (text: string, field: string) => {
@@ -24,6 +26,28 @@ function IdentityCard({ identity, onDelete }: IdentityCardProps) {
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleString()
   }
+
+  const formatAttributeValue = (value: any, type: string) => {
+    if (value === undefined || value === null || value === '') {
+      return 'Not provided'
+    }
+    
+    if (type === 'boolean') {
+      return value ? 'Yes' : 'No'
+    }
+    
+    if (type === 'date') {
+      return new Date(value).toLocaleDateString()
+    }
+    
+    return value.toString()
+  }
+
+  // Get populated attributes
+  const populatedAttributes = ENHANCED_SCHEMA.filter(field => {
+    const value = identity.attributes?.[field.name]
+    return value !== undefined && value !== null && value !== ''
+  })
 
   return (
     <div className="identity-card">
@@ -75,6 +99,33 @@ function IdentityCard({ identity, onDelete }: IdentityCardProps) {
           )}
         </div>
       </div>
+
+      {populatedAttributes.length > 0 && (
+        <div className="identity-field">
+          <div className="attributes-header">
+            <label>Profile Information:</label>
+            <button
+              className="toggle-button"
+              onClick={() => setShowAttributes(!showAttributes)}
+            >
+              {showAttributes ? '🔼' : '🔽'}
+            </button>
+          </div>
+          
+          {showAttributes && (
+            <div className="attributes-section">
+              {populatedAttributes.map(field => (
+                <div key={field.name} className="attribute-item">
+                  <span className="attribute-label">{field.label}:</span>
+                  <span className="attribute-value">
+                    {formatAttributeValue(identity.attributes[field.name], field.type)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="identity-field">
         <label>Created:</label>
