@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Identity } from '../types/identity'
 import { ENHANCED_SCHEMA } from '../utils/anonIdentity'
+import { QRCodeModal } from './QRCodeModal'
 import './IdentityCard.css'
 
 interface IdentityCardProps {
@@ -12,6 +13,7 @@ function IdentityCard({ identity, onDelete }: IdentityCardProps) {
   const [showPrivateKey, setShowPrivateKey] = useState(false)
   const [showAttributes, setShowAttributes] = useState(false)
   const [copied, setCopied] = useState<string | null>(null)
+  const [showQRModal, setShowQRModal] = useState(false)
 
   const handleCopy = async (text: string, field: string) => {
     try {
@@ -131,6 +133,22 @@ function IdentityCard({ identity, onDelete }: IdentityCardProps) {
         <label>Created:</label>
         <span>{formatDate(identity.createdAt)}</span>
       </div>
+      
+      <div className="identity-actions">
+        <button 
+          className="qr-button"
+          onClick={() => setShowQRModal(true)}
+          title="Generate QR code for mobile transfer"
+        >
+          📱 Transfer to Mobile
+        </button>
+      </div>
+      
+      <QRCodeModal 
+        identity={identity}
+        isOpen={showQRModal}
+        onClose={() => setShowQRModal(false)}
+      />
     </div>
   )
 }
