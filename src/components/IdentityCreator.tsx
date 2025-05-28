@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CryptoService } from 'anon-identity'
+import { CryptoService } from '../utils/crypto'
 import { Identity } from '../types/identity'
 import './IdentityCreator.css'
 

@@ -52,7 +52,7 @@ npm run preview
 - **React 19** - UI framework
 - **TypeScript** - Type safety
 - **Vite** - Build tool
-- **anon-identity** - Cryptographic identity generation
+- **Web Crypto API** - Browser-native cryptographic key generation
 
 ## Security Notice
 
