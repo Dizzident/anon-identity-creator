@@ -1,0 +1,64 @@
+.storage-config {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.storage-config h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.storage-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.storage-options label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.storage-options label:hover {
+  background-color: #e8e8e8;
+}
+
+.storage-options input[type="radio"] {
+  margin-top: 2px;
+}
+
+.storage-options span {
+  font-weight: 500;
+  display: block;
+}
+
+.storage-options small {
+  display: block;
+  color: #666;
+  font-size: 0.85em;
+  margin-top: 2px;
+}
+
+.storage-info {
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.storage-info p {
+  margin: 0;
+  color: #555;
+}
+
+.storage-info strong {
+  color: #333;
+}

@@ -9,6 +9,22 @@ jest.mock('../utils/crypto', () => ({
   },
 }))
 
+// Mock the storage providers
+jest.mock('../utils/storage', () => ({
+  createStorageProvider: jest.fn(() => ({
+    type: 'memory',
+    save: jest.fn().mockResolvedValue(undefined),
+    load: jest.fn().mockResolvedValue([]),
+    clear: jest.fn().mockResolvedValue(undefined),
+  })),
+  MemoryStorageProvider: jest.fn().mockImplementation(() => ({
+    type: 'memory',
+    save: jest.fn().mockResolvedValue(undefined),
+    load: jest.fn().mockResolvedValue([]),
+    clear: jest.fn().mockResolvedValue(undefined),
+  })),
+}))
+
 describe('App', () => {
   const mockKeyPair = {
     publicKey: new Uint8Array([1, 2, 3, 4, 5]),
@@ -17,13 +33,21 @@ describe('App', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    localStorage.clear()
+    sessionStorage.clear()
     ;(CryptoService.generateKeyPair as jest.Mock).mockResolvedValue(mockKeyPair)
+    // Mock window.confirm to always return true for storage change tests
+    window.confirm = jest.fn(() => true)
   })
 
-  it('renders app header and main components', () => {
+  it('renders app header and main components', async () => {
     render(<App />)
     
-    expect(screen.getByText('Anonymous Identity Manager')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText('Anonymous Identity Manager')).toBeInTheDocument()
+    })
+    
+    expect(screen.getByText('Storage Configuration')).toBeInTheDocument()
     expect(screen.getByText('Create New Identity')).toBeInTheDocument()
     expect(screen.getByText('Your Identities')).toBeInTheDocument()
   })
@@ -93,5 +117,37 @@ describe('App', () => {
     
     expect(screen.getByText('Identity 1')).toBeInTheDocument()
     expect(screen.getByText('Identity 2')).toBeInTheDocument()
+  })
+
+  it('displays storage configuration with default memory storage', async () => {
+    render(<App />)
+    
+    expect(screen.getByText('Storage Configuration')).toBeInTheDocument()
+    expect(screen.getByText('Current storage:')).toBeInTheDocument()
+    expect(screen.getByText('memory')).toBeInTheDocument()
+    
+    const memoryRadio = screen.getByDisplayValue('memory') as HTMLInputElement
+    expect(memoryRadio.checked).toBe(true)
+  })
+
+  it('changes storage type when radio button is clicked', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    
+    // Wait for initial render
+    await waitFor(() => {
+      expect(screen.getByText('Storage Configuration')).toBeInTheDocument()
+    })
+    
+    const localStorageRadio = screen.getByDisplayValue('localStorage')
+    await user.click(localStorageRadio)
+    
+    expect(window.confirm).toHaveBeenCalledWith(
+      'Changing storage type will clear current identities from the old storage. Continue?'
+    )
+    
+    await waitFor(() => {
+      expect(screen.getByText('localStorage')).toBeInTheDocument()
+    })
   })
 })
