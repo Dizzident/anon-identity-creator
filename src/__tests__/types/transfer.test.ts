@@ -92,11 +92,11 @@ describe('Transfer Data', () => {
   it('should generate consistent checksums for same data', () => {
     // Mock crypto.randomUUID to return consistent values
     const originalRandomUUID = crypto.randomUUID
-    crypto.randomUUID = jest.fn(() => 'consistent-uuid-123')
+    ;(crypto as any).randomUUID = jest.fn(() => 'consistent-uuid-123')
     
     // Mock Date.now to return consistent timestamp
     const originalDateNow = Date.now
-    Date.now = jest.fn(() => 1234567890000)
+    ;(Date as any).now = jest.fn(() => 1234567890000)
     
     const transfer1 = createTransferData(mockIdentity)
     const transfer2 = createTransferData(mockIdentity)

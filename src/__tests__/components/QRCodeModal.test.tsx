@@ -28,7 +28,7 @@ describe('QRCodeModal', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    mockQRCode.toDataURL.mockResolvedValue(mockDataURL)
+    ;(mockQRCode.toDataURL as jest.Mock).mockResolvedValue(mockDataURL)
     
     // Mock clipboard API
     Object.assign(navigator, {
@@ -86,7 +86,7 @@ describe('QRCodeModal', () => {
 
   it('should show loading state while generating QR code', () => {
     // Make QRCode generation take longer
-    mockQRCode.toDataURL.mockReturnValue(new Promise(() => {}))
+    ;(mockQRCode.toDataURL as jest.Mock).mockReturnValue(new Promise(() => {}))
 
     render(
       <QRCodeModal 
@@ -219,7 +219,7 @@ describe('QRCodeModal', () => {
 
   it('should handle QR code generation error', async () => {
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
-    mockQRCode.toDataURL.mockRejectedValue(new Error('QR generation failed'))
+    ;(mockQRCode.toDataURL as jest.Mock).mockRejectedValue(new Error('QR generation failed'))
 
     render(
       <QRCodeModal 
