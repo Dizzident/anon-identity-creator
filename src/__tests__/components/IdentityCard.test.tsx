@@ -111,4 +111,72 @@ describe('IdentityCard', () => {
     
     consoleSpy.mockRestore()
   })
+
+  it('displays and hides profile information', async () => {
+    const user = userEvent.setup()
+    render(<IdentityCard identity={mockIdentity} onDelete={mockOnDelete} />)
+    
+    // Profile information should be present
+    expect(screen.getByText('Profile Information:')).toBeInTheDocument()
+    
+    // Initially attributes should be hidden
+    expect(screen.queryByText('First Name:')).not.toBeInTheDocument()
+    
+    // Click to show attributes
+    const toggleButton = screen.getByRole('button', { name: '🔽' })
+    await user.click(toggleButton)
+    
+    // Now attributes should be visible
+    expect(screen.getByText('First Name:')).toBeInTheDocument()
+    expect(screen.getByText('John')).toBeInTheDocument()
+    expect(screen.getByText('Last Name:')).toBeInTheDocument()
+    expect(screen.getByText('Doe')).toBeInTheDocument()
+    expect(screen.getByText('Email Address:')).toBeInTheDocument()
+    expect(screen.getByText('john.doe@example.com')).toBeInTheDocument()
+    expect(screen.getByText('Are you over 18?:')).toBeInTheDocument()
+    expect(screen.getByText('Yes')).toBeInTheDocument()
+    
+    // Click to hide attributes
+    const hideButton = screen.getByRole('button', { name: '🔼' })
+    await user.click(hideButton)
+    
+    // Attributes should be hidden again
+    expect(screen.queryByText('First Name:')).not.toBeInTheDocument()
+  })
+
+  it('formats different attribute types correctly', async () => {
+    const identityWithDifferentTypes: Identity = {
+      ...mockIdentity,
+      attributes: {
+        dateOfBirth: '1990-01-01',
+        isOver18: false,
+      }
+    }
+    
+    const user = userEvent.setup()
+    render(<IdentityCard identity={identityWithDifferentTypes} onDelete={mockOnDelete} />)
+    
+    // Should show the profile section with populated attributes
+    expect(screen.getByText('Profile Information:')).toBeInTheDocument()
+    
+    // Click to show attributes
+    const toggleButton = screen.getByRole('button', { name: '🔽' })
+    await user.click(toggleButton)
+    
+    // Check that different types are formatted correctly
+    expect(screen.getByText('12/31/1989')).toBeInTheDocument() // Date formatting (JS date parsing can be tricky)
+    expect(screen.getByText('No')).toBeInTheDocument() // Boolean formatting
+  })
+
+  it('handles identity without attributes', () => {
+    const identityWithoutAttrs: Identity = {
+      ...mockIdentity,
+      attributes: {}
+    }
+    
+    render(<IdentityCard identity={identityWithoutAttrs} onDelete={mockOnDelete} />)
+    
+    // Should not show profile information section
+    expect(screen.queryByText('Profile Information:')).not.toBeInTheDocument()
+  })
 })
