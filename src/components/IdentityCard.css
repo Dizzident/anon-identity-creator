@@ -1,0 +1,98 @@
+.identity-card {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: box-shadow 0.3s ease;
+}
+
+.identity-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.identity-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.identity-header h3 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.delete-button {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+  background: #c0392b;
+}
+
+.identity-field {
+  margin-bottom: 1rem;
+}
+
+.identity-field:last-child {
+  margin-bottom: 0;
+}
+
+.identity-field label {
+  display: block;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.field-value {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.field-value code {
+  flex: 1;
+  background: white;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.copy-button,
+.toggle-button {
+  background: transparent;
+  border: 1px solid #ddd;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.copy-button:hover,
+.toggle-button:hover {
+  background: #f8f9fa;
+  border-color: #3498db;
+}
+
+.identity-field > span {
+  color: #666;
+  font-size: 0.875rem;
+}
