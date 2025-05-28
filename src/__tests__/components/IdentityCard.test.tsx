@@ -164,7 +164,9 @@ describe('IdentityCard', () => {
     await user.click(toggleButton)
     
     // Check that different types are formatted correctly
-    expect(screen.getByText('12/31/1989')).toBeInTheDocument() // Date formatting (timezone adjusted)
+    // For date formatting, check for the actual formatted output to avoid timezone issues
+    const expectedDateFormat = new Date('1990-01-01').toLocaleDateString()
+    expect(screen.getByText(expectedDateFormat)).toBeInTheDocument() // Date formatting (timezone safe)
     expect(screen.getByText('No')).toBeInTheDocument() // Boolean formatting
   })
 

@@ -26,6 +26,10 @@ const config: Config = {
       statements: 70,
     },
   },
+  // Set consistent timezone for all tests to avoid cross-environment issues
+  testEnvironmentOptions: {
+    timezone: 'UTC',
+  },
 }
 
 export default config
