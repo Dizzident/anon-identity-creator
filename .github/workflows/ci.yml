@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI Pipeline
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+  test-and-build:
     name: Test and Build
     runs-on: ubuntu-latest
     
@@ -52,40 +52,3 @@ jobs:
       with:
         name: dist
         path: dist
-
-  deploy:
-    name: Deploy to GitHub Pages
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Download artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: dist
-        path: dist
-    
-    - name: Setup Pages
-      uses: actions/configure-pages@v4
-    
-    - name: Upload to GitHub Pages
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: dist
-    
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
