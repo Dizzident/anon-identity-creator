@@ -8,7 +8,7 @@ Object.defineProperty(globalThis, 'crypto', {
   value: {
     randomUUID: () => Math.random().toString(36).substring(2, 15),
     subtle: {
-      digest: async (algorithm: string, data: ArrayBuffer) => {
+      digest: async (_algorithm: string, data: ArrayBuffer) => {
         // Simple mock implementation for SHA-256
         const bytes = new Uint8Array(data)
         let hash = 0
