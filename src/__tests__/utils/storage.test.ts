@@ -196,5 +196,23 @@ describe('Storage Providers', () => {
       expect(provider).toBeInstanceOf(SessionStorageProvider)
       expect(provider.type).toBe('sessionStorage')
     })
+
+    it('should create IPFSStorageProvider for ipfs type', () => {
+      const provider = createStorageProvider('ipfs')
+      expect(provider.type).toBe('ipfs')
+    })
+
+    it('should create BlockchainStorageProvider for blockchain type', () => {
+      const provider = createStorageProvider('blockchain')
+      expect(provider.type).toBe('blockchain')
+    })
+
+    it('should pass config to providers', () => {
+      const ipfsProvider = createStorageProvider('ipfs', { ipfsGateway: 'https://custom.gateway/' })
+      const blockchainProvider = createStorageProvider('blockchain', { blockchainNetwork: 'polygon' })
+      
+      expect(ipfsProvider.type).toBe('ipfs')
+      expect(blockchainProvider.type).toBe('blockchain')
+    })
   })
 })

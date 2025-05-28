@@ -1,6 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { StorageConfig } from '../../components/StorageConfig'
-import { StorageType } from '../../types/storage'
 
 describe('StorageConfig', () => {
   const mockOnTypeChange = jest.fn()
@@ -48,7 +47,7 @@ describe('StorageConfig', () => {
     const localStorageRadio = screen.getByDisplayValue('localStorage')
     fireEvent.click(localStorageRadio)
     
-    expect(mockOnTypeChange).toHaveBeenCalledWith('localStorage')
+    expect(mockOnTypeChange).toHaveBeenCalledWith('localStorage', {})
   })
 
   it('should update current storage display', () => {
@@ -65,19 +64,29 @@ describe('StorageConfig', () => {
     // Test localStorage selection
     const localStorageRadio = screen.getByDisplayValue('localStorage')
     fireEvent.click(localStorageRadio)
-    expect(mockOnTypeChange).toHaveBeenCalledWith('localStorage')
+    expect(mockOnTypeChange).toHaveBeenCalledWith('localStorage', {})
     
     // Test sessionStorage selection
     const sessionStorageRadio = screen.getByDisplayValue('sessionStorage')
     fireEvent.click(sessionStorageRadio)
-    expect(mockOnTypeChange).toHaveBeenCalledWith('sessionStorage')
+    expect(mockOnTypeChange).toHaveBeenCalledWith('sessionStorage', {})
     
     // Test memory selection (when not already selected)
     rerender(<StorageConfig currentType="localStorage" onTypeChange={mockOnTypeChange} />)
     const memoryRadio = screen.getByDisplayValue('memory')
     fireEvent.click(memoryRadio)
-    expect(mockOnTypeChange).toHaveBeenCalledWith('memory')
+    expect(mockOnTypeChange).toHaveBeenCalledWith('memory', {})
     
-    expect(mockOnTypeChange).toHaveBeenCalledTimes(3)
+    // Test IPFS selection
+    const ipfsRadio = screen.getByDisplayValue('ipfs')
+    fireEvent.click(ipfsRadio)
+    expect(mockOnTypeChange).toHaveBeenCalledWith('ipfs', { ipfsGateway: 'https://ipfs.io/ipfs/' })
+    
+    // Test blockchain selection
+    const blockchainRadio = screen.getByDisplayValue('blockchain')
+    fireEvent.click(blockchainRadio)
+    expect(mockOnTypeChange).toHaveBeenCalledWith('blockchain', { blockchainNetwork: 'ethereum' })
+    
+    expect(mockOnTypeChange).toHaveBeenCalledTimes(5)
   })
 })

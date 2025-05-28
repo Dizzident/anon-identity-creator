@@ -1,5 +1,7 @@
 import { Identity } from '../types/identity'
-import { StorageProvider, StorageType } from '../types/storage'
+import { StorageProvider, StorageType, StorageConfig } from '../types/storage'
+import { IPFSStorageProvider } from './ipfsStorage'
+import { BlockchainStorageProvider } from './blockchainStorage'
 
 const STORAGE_KEY = 'anon-identities'
 
@@ -74,12 +76,19 @@ export class SessionStorageProvider implements StorageProvider {
   }
 }
 
-export function createStorageProvider(type: StorageType): StorageProvider {
+export function createStorageProvider(type: StorageType, config?: Partial<StorageConfig>): StorageProvider {
   switch (type) {
     case 'localStorage':
       return new LocalStorageProvider()
     case 'sessionStorage':
       return new SessionStorageProvider()
+    case 'ipfs':
+      return new IPFSStorageProvider(config?.ipfsGateway)
+    case 'blockchain':
+      return new BlockchainStorageProvider({
+        network: config?.blockchainNetwork || 'ethereum',
+        walletAddress: config?.walletAddress
+      })
     case 'memory':
     default:
       return new MemoryStorageProvider()
