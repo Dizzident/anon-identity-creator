@@ -47,6 +47,32 @@ npm run build
 npm run preview
 ```
 
+### Docker Deployment
+
+The application can be deployed as a Docker container:
+
+```bash
+# Build the Docker image
+docker build -t anon-identity-creator .
+
+# Run the container
+docker run -d -p 3000:80 --name anon-identity-creator anon-identity-creator
+
+# Or use docker-compose
+docker-compose up -d
+```
+
+The containerized application will be available at http://localhost:3000
+
+To stop the container:
+```bash
+# Using docker
+docker stop anon-identity-creator
+
+# Using docker-compose
+docker-compose down
+```
+
 ## Technology Stack
 
 - **React 19** - UI framework
