@@ -91,8 +91,8 @@ describe('Transfer Data', () => {
 
   it('should generate consistent checksums for same data', () => {
     // Mock crypto.randomUUID to return consistent values
-    const originalRandomUUID = crypto.randomUUID
-    ;(crypto as any).randomUUID = jest.fn(() => 'consistent-uuid-123')
+    const originalRandomUUID = global.crypto.randomUUID
+    ;(global.crypto as any).randomUUID = jest.fn(() => 'consistent-uuid-123')
     
     // Mock Date.now to return consistent timestamp
     const originalDateNow = Date.now
@@ -104,7 +104,7 @@ describe('Transfer Data', () => {
     expect(transfer1.security.checksum).toBe(transfer2.security.checksum)
     
     // Restore original functions
-    crypto.randomUUID = originalRandomUUID
+    global.crypto.randomUUID = originalRandomUUID
     Date.now = originalDateNow
   })
 

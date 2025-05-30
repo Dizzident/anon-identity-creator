@@ -139,7 +139,7 @@ describe('CredentialManager', () => {
     render(<CredentialManager identity={mockIdentity} onIdentityUpdate={mockOnIdentityUpdate} />)
     
     // Check first credential
-    expect(screen.getByText('IdentityCredential')).toBeInTheDocument()
+    expect(screen.getByText('Identity Credential')).toBeInTheDocument()
     expect(screen.getByText('givenName:')).toBeInTheDocument()
     expect(screen.getByText('John')).toBeInTheDocument()
     expect(screen.getByText('familyName:')).toBeInTheDocument()
@@ -421,7 +421,7 @@ describe('CredentialManager', () => {
 
     render(<CredentialManager identity={basicIdentity} onIdentityUpdate={mockOnIdentityUpdate} />)
     
-    expect(screen.getByText('IdentityCredential')).toBeInTheDocument()
+    expect(screen.getByText('Identity Credential')).toBeInTheDocument()
   })
 
   it('should format dates correctly', () => {

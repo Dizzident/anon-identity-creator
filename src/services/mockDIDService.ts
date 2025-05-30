@@ -204,13 +204,14 @@ export class MockDIDService {
   }
 
   static convertLegacyIdentity(legacyIdentity: any): DIDIdentity {
+    const didId = `did:key:legacy-${legacyIdentity.id}`;
     const mockDID: MockDID = {
-      id: `did:key:legacy-${legacyIdentity.id}`,
-      publicKey: new Uint8Array(32) // Mock public key
+      id: didId,
+      publicKey: crypto.getRandomValues(new Uint8Array(32)) // Mock public key
     };
     
     return {
-      id: legacyIdentity.id,
+      id: didId,
       name: legacyIdentity.name,
       did: mockDID as any,
       credentials: [], // Will need to be populated separately

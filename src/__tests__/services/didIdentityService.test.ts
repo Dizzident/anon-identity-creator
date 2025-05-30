@@ -6,15 +6,11 @@ jest.mock('anon-identity/browser', () => ({
   IdentityProvider: {
     create: jest.fn().mockResolvedValue({
       getDID: jest.fn().mockReturnValue('did:mock:identityprovider'),
-      issueVerifiableCredential: jest.fn().mockResolvedValue({
+      issueVerifiableCredential: jest.fn().mockImplementation((userDID, credentialSubject) => ({
         '@context': ['https://www.w3.org/2018/credentials/v1'],
         id: 'credential-123',
         type: ['VerifiableCredential'],
-        credentialSubject: {
-          id: 'did:mock:user123',
-          givenName: 'John',
-          familyName: 'Doe'
-        },
+        credentialSubject: credentialSubject,
         issuer: 'did:mock:identityprovider',
         issuanceDate: '2023-01-01T00:00:00Z',
         proof: {
@@ -24,7 +20,7 @@ jest.mock('anon-identity/browser', () => ({
           verificationMethod: 'did:mock:identityprovider#key-1',
           jws: 'mock-proof'
         }
-      })
+      }))
     })
   },
   UserWallet: {
@@ -69,6 +65,9 @@ jest.mock('anon-identity/browser', () => ({
 describe('DIDIdentityService', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    // Reset static caches
+    ;(DIDIdentityService as any).identityProvider = null
+    ;(DIDIdentityService as any).serviceProvider = null
   })
 
   describe('getIdentityProvider', () => {
@@ -83,6 +82,9 @@ describe('DIDIdentityService', () => {
 
     it('should return cached identity provider on subsequent calls', async () => {
       const { IdentityProvider } = require('anon-identity/browser')
+      
+      // Clear previous call counts but don't reset cache for this test
+      jest.clearAllMocks()
       
       const idp1 = await DIDIdentityService.getIdentityProvider()
       const idp2 = await DIDIdentityService.getIdentityProvider()
@@ -107,6 +109,9 @@ describe('DIDIdentityService', () => {
 
     it('should return cached service provider on subsequent calls', async () => {
       const { ServiceProvider } = require('anon-identity/browser')
+      
+      // Clear previous call counts but don't reset cache for this test
+      jest.clearAllMocks()
       
       const sp1 = await DIDIdentityService.getServiceProvider()
       const sp2 = await DIDIdentityService.getServiceProvider()
@@ -276,6 +281,9 @@ describe('DIDIdentityService', () => {
     })
 
     it('should return false for invalid presentation', async () => {
+      // Reset service provider cache for this test
+      ;(DIDIdentityService as any).serviceProvider = null
+      
       const mockServiceProvider = {
         verifyPresentation: jest.fn().mockResolvedValue({
           valid: false,
@@ -292,6 +300,9 @@ describe('DIDIdentityService', () => {
     })
 
     it('should handle verification errors', async () => {
+      // Reset service provider cache for this test
+      ;(DIDIdentityService as any).serviceProvider = null
+      
       const mockServiceProvider = {
         verifyPresentation: jest.fn().mockRejectedValue(new Error('Verification failed'))
       }
@@ -372,6 +383,9 @@ describe('DIDIdentityService', () => {
     })
 
     it('should handle errors during credential addition', async () => {
+      // Reset identity provider cache for this test
+      ;(DIDIdentityService as any).identityProvider = null
+      
       const { IdentityProvider } = require('anon-identity/browser')
       const mockIdp = {
         getDID: jest.fn().mockReturnValue('did:mock:identityprovider'),

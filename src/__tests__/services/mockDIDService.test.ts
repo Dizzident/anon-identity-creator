@@ -1,26 +1,25 @@
 import { MockDIDService } from '../../services/mockDIDService'
 import { DIDIdentity, IdentityAttributes } from '../../types/identity'
-
-// Mock crypto.randomUUID and crypto.getRandomValues
-const mockCrypto = {
-  randomUUID: jest.fn(() => 'mock-uuid-12345'),
-  getRandomValues: jest.fn((array) => {
-    for (let i = 0; i < array.length; i++) {
-      array[i] = i % 256
-    }
-    return array
-  })
-}
-
-Object.defineProperty(global, 'crypto', {
-  value: mockCrypto,
-  writable: true,
-  configurable: true
-})
+import { setupGlobalCryptoMock, resetCryptoMocks, CryptoMockPresets } from '../../test-utils/crypto'
 
 describe('MockDIDService', () => {
+  let mockCrypto: any
+
   beforeEach(() => {
-    jest.clearAllMocks()
+    // Setup DID-specific crypto mocking
+    mockCrypto = setupGlobalCryptoMock({
+      randomUUID: jest.fn(() => 'mock-uuid-12345'),
+      getRandomValues: jest.fn((array) => {
+        for (let i = 0; i < array.length; i++) {
+          array[i] = i % 256
+        }
+        return array
+      })
+    })
+  })
+
+  afterEach(() => {
+    resetCryptoMocks(mockCrypto)
   })
 
   describe('createDIDIdentity', () => {
@@ -65,19 +64,22 @@ describe('MockDIDService', () => {
 
     it('should generate unique DID for each identity', async () => {
       // Mock different UUIDs for consecutive calls
+      // Each createDIDIdentity call uses 3 UUIDs: DID ID, credential ID, JWS signature
       mockCrypto.randomUUID
-        .mockReturnValueOnce('uuid-1')
-        .mockReturnValueOnce('uuid-2')
-        .mockReturnValueOnce('uuid-3')
-        .mockReturnValueOnce('uuid-4')
+        .mockReturnValueOnce('uuid-1') // For identity1 DID
+        .mockReturnValueOnce('uuid-2') // For identity1 credential
+        .mockReturnValueOnce('uuid-3') // For identity1 JWS signature
+        .mockReturnValueOnce('uuid-4') // For identity2 DID
+        .mockReturnValueOnce('uuid-5') // For identity2 credential
+        .mockReturnValueOnce('uuid-6') // For identity2 JWS signature
 
       const identity1 = await MockDIDService.createDIDIdentity('User 1', { givenName: 'Alice' })
       const identity2 = await MockDIDService.createDIDIdentity('User 2', { givenName: 'Bob' })
 
       expect(identity1.id).toBe('did:key:mock-uuid-1')
-      expect(identity2.id).toBe('did:key:mock-uuid-2')
+      expect(identity2.id).toBe('did:key:mock-uuid-4')
       expect(identity1.credentials[0].id).toBe('urn:uuid:uuid-2')
-      expect(identity2.credentials[0].id).toBe('urn:uuid:uuid-4')
+      expect(identity2.credentials[0].id).toBe('urn:uuid:uuid-5')
     })
 
     it('should handle empty attributes', async () => {
@@ -470,11 +472,12 @@ describe('MockDIDService', () => {
     })
 
     it('should generate unique credential IDs', async () => {
+      // Each addCredentialToIdentity call uses 2 UUIDs: one for credential ID, one for JWS signature
       mockCrypto.randomUUID
-        .mockReturnValueOnce('uuid-1')
-        .mockReturnValueOnce('uuid-2')
-        .mockReturnValueOnce('uuid-3')
-        .mockReturnValueOnce('uuid-4')
+        .mockReturnValueOnce('uuid-1') // For first credential ID
+        .mockReturnValueOnce('uuid-2') // For first credential JWS
+        .mockReturnValueOnce('uuid-3') // For second credential ID
+        .mockReturnValueOnce('uuid-4') // For second credential JWS
 
       const updated1 = await MockDIDService.addCredentialToIdentity(
         mockIdentity,

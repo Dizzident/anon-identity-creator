@@ -47,7 +47,7 @@ describe('App', () => {
       expect(screen.getByText('Anonymous Identity Manager')).toBeInTheDocument()
     })
     
-    expect(screen.getByText('Storage Configuration')).toBeInTheDocument()
+    expect(screen.getByText('DID Storage Configuration')).toBeInTheDocument()
     expect(screen.getByText('Create New Identity')).toBeInTheDocument()
     expect(screen.getByText('Your Identities')).toBeInTheDocument()
   })

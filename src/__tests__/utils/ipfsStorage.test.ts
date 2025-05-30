@@ -79,12 +79,12 @@ describe('IPFSStorageProvider', () => {
 
   it('should handle save errors', async () => {
     // Mock crypto.subtle.digest to throw an error
-    const originalDigest = crypto.subtle.digest
-    crypto.subtle.digest = jest.fn().mockRejectedValue(new Error('Digest failed'))
+    const originalDigest = global.crypto.subtle.digest
+    global.crypto.subtle.digest = jest.fn().mockRejectedValue(new Error('Digest failed'))
     
     await expect(provider.save(mockIdentities)).rejects.toThrow()
     
     // Restore original function
-    crypto.subtle.digest = originalDigest
+    global.crypto.subtle.digest = originalDigest
   })
 })

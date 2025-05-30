@@ -52,17 +52,20 @@ const mockStorage = {
 }
 
 // Mock window object with storage
-Object.defineProperty(global, 'window', {
-  value: {
-    localStorage: mockStorage,
-    sessionStorage: mockStorage
-  },
+Object.defineProperty(global, 'localStorage', {
+  value: mockStorage,
   writable: true,
   configurable: true
 })
 
-describe('DIDStorageProvider', () => {
-  const mockIdentities: DIDIdentity[] = [
+Object.defineProperty(global, 'sessionStorage', {
+  value: mockStorage,
+  writable: true,
+  configurable: true
+})
+
+// Mock data used across all tests
+const mockIdentities: DIDIdentity[] = [
     {
       id: 'did:mock:123',
       name: 'Test Identity 1',
@@ -107,6 +110,7 @@ describe('DIDStorageProvider', () => {
     }
   ]
 
+describe('DIDStorageProvider', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockIDBDatabase.transaction.mockReturnValue(mockIDBTransaction)

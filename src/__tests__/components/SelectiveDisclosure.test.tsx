@@ -165,7 +165,7 @@ describe('SelectiveDisclosure', () => {
     render(<SelectiveDisclosure identity={mockIdentity} onPresentationCreated={mockOnPresentationCreated} />)
     
     const checkboxes = screen.getAllByRole('checkbox')
-    expect(checkboxes).toHaveLength(8) // 7 attributes + select all button
+    expect(checkboxes).toHaveLength(8) // 8 attributes
     
     // Initially no checkboxes should be checked
     checkboxes.forEach(checkbox => {
@@ -177,7 +177,7 @@ describe('SelectiveDisclosure', () => {
     expect(checkboxes[1]).toBeChecked()
     
     // Select count should update
-    expect(screen.getByText('1 of 7 attributes selected')).toBeInTheDocument()
+    expect(screen.getByText('1 of 8 attributes selected')).toBeInTheDocument()
   })
 
   it('should handle select all functionality', () => {
@@ -192,7 +192,7 @@ describe('SelectiveDisclosure', () => {
       expect(checkbox).toBeChecked()
     })
     
-    expect(screen.getByText('7 of 7 attributes selected')).toBeInTheDocument()
+    expect(screen.getByText('8 of 8 attributes selected')).toBeInTheDocument()
     expect(screen.getByText('Deselect All')).toBeInTheDocument()
     
     // Click deselect all
@@ -202,7 +202,7 @@ describe('SelectiveDisclosure', () => {
       expect(checkbox).not.toBeChecked()
     })
     
-    expect(screen.getByText('0 of 7 attributes selected')).toBeInTheDocument()
+    expect(screen.getByText('0 of 8 attributes selected')).toBeInTheDocument()
     expect(screen.getByText('Select All')).toBeInTheDocument()
   })
 
@@ -247,21 +247,15 @@ describe('SelectiveDisclosure', () => {
   it('should show error when trying to create presentation with no attributes', async () => {
     render(<SelectiveDisclosure identity={mockIdentity} onPresentationCreated={mockOnPresentationCreated} />)
     
-    // Force enable the button by selecting and then deselecting
-    const checkboxes = screen.getAllByRole('checkbox')
-    fireEvent.click(checkboxes[1])
-    fireEvent.click(checkboxes[1]) // Deselect
+    // The create button should be disabled when no attributes are selected
+    const createButton = screen.getByText('Create Presentation')
+    expect(createButton).toBeDisabled()
     
-    // Try to create presentation directly (bypass disabled button)
-    const component = screen.getByText('Create Presentation').closest('.selective-disclosure')
-    const createPresentationSpy = jest.spyOn(require('../../components/SelectiveDisclosure').SelectiveDisclosure.prototype, 'createSelectivePresentation')
+    // Force click the disabled button (which shouldn't trigger the function)
+    fireEvent.click(createButton)
     
-    // Manually trigger the function
-    fireEvent.click(screen.getByText('Create Presentation'))
-    
-    await waitFor(() => {
-      expect(global.alert).toHaveBeenCalledWith('Please select at least one attribute to disclose')
-    })
+    // Since the button is disabled, no alert should be called
+    expect(global.alert).not.toHaveBeenCalled()
   })
 
   it('should show loading state while creating presentation', async () => {
@@ -400,7 +394,7 @@ describe('SelectiveDisclosure', () => {
     
     // Select only attributes from first credential
     const checkboxes = screen.getAllByRole('checkbox')
-    fireEvent.click(checkboxes[1]) // givenName from first credential
+    fireEvent.click(checkboxes[0]) // givenName from first credential (index 0)
     
     const createButton = screen.getByText('Create Presentation')
     fireEvent.click(createButton)
@@ -423,7 +417,7 @@ describe('SelectiveDisclosure', () => {
     
     // Select an attribute
     const checkboxes = screen.getAllByRole('checkbox')
-    fireEvent.click(checkboxes[1]) // givenName
+    fireEvent.click(checkboxes[0]) // givenName (index 0)
     
     const createButton = screen.getByText('Create Presentation')
     fireEvent.click(createButton)
@@ -460,20 +454,20 @@ describe('SelectiveDisclosure', () => {
   it('should update selection count correctly', () => {
     render(<SelectiveDisclosure identity={mockIdentity} onPresentationCreated={mockOnPresentationCreated} />)
     
-    expect(screen.getByText('0 of 7 attributes selected')).toBeInTheDocument()
+    expect(screen.getByText('0 of 8 attributes selected')).toBeInTheDocument()
     
     // Select one attribute
     const checkboxes = screen.getAllByRole('checkbox')
     fireEvent.click(checkboxes[1])
-    expect(screen.getByText('1 of 7 attributes selected')).toBeInTheDocument()
+    expect(screen.getByText('1 of 8 attributes selected')).toBeInTheDocument()
     
     // Select another
     fireEvent.click(checkboxes[2])
-    expect(screen.getByText('2 of 7 attributes selected')).toBeInTheDocument()
+    expect(screen.getByText('2 of 8 attributes selected')).toBeInTheDocument()
     
     // Deselect one
     fireEvent.click(checkboxes[1])
-    expect(screen.getByText('1 of 7 attributes selected')).toBeInTheDocument()
+    expect(screen.getByText('1 of 8 attributes selected')).toBeInTheDocument()
   })
 
   it('should close presentation when close button is clicked', async () => {

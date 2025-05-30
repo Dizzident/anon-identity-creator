@@ -1,24 +1,25 @@
 import { CryptoService } from '../../utils/crypto'
-
-// Mock Web Crypto API
-const mockCrypto = {
-  subtle: {
-    generateKey: jest.fn(),
-    exportKey: jest.fn()
-  },
-  getRandomValues: jest.fn()
-}
-
-// Mock global crypto
-Object.defineProperty(global, 'crypto', {
-  value: mockCrypto,
-  writable: true,
-  configurable: true
-})
+import { setupGlobalCryptoMock, resetCryptoMocks, CryptoMockPresets } from '../../test-utils/crypto'
 
 describe('CryptoService', () => {
+  let mockCrypto: any
+
   beforeEach(() => {
-    jest.clearAllMocks()
+    // Setup crypto service specific mocking
+    mockCrypto = setupGlobalCryptoMock({
+      getRandomValues: jest.fn((array) => {
+        for (let i = 0; i < array.length; i++) {
+          array[i] = i % 256
+        }
+        return array
+      }),
+      generateKey: jest.fn(),
+      exportKey: jest.fn()
+    })
+  })
+
+  afterEach(() => {
+    resetCryptoMocks(mockCrypto)
   })
 
   describe('generateKeyPair', () => {

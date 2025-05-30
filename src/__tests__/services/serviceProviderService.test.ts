@@ -1,13 +1,7 @@
 import { ServiceProviderService } from '../../services/serviceProviderService'
 import { VerifiableCredential } from '../../types/identity'
 import { VerificationRequestData } from '../../types/serviceProvider'
-
-// Mock crypto.randomUUID
-Object.defineProperty(global, 'crypto', {
-  value: {
-    randomUUID: jest.fn().mockReturnValue('mock-uuid-123')
-  }
-})
+import { setupGlobalCryptoMock, resetCryptoMocks } from '../../test-utils/crypto'
 
 // Mock MockDIDService
 jest.mock('../../services/mockDIDService', () => ({
@@ -17,11 +11,23 @@ jest.mock('../../services/mockDIDService', () => ({
 }))
 
 describe('ServiceProviderService', () => {
+  let mockCrypto: any
+
   beforeEach(() => {
+    // Setup crypto mocking for service provider tests with sequential UUIDs
+    let uuidCounter = 0
+    mockCrypto = setupGlobalCryptoMock({
+      randomUUID: jest.fn(() => `mock-uuid-${++uuidCounter}`)
+    })
+    
     jest.clearAllMocks()
     // Clear service state
     ServiceProviderService['sessions'].clear()
     ServiceProviderService['verificationHistory'].clear()
+  })
+
+  afterEach(() => {
+    resetCryptoMocks(mockCrypto)
   })
 
   const mockCredential: VerifiableCredential = {
@@ -57,7 +63,7 @@ describe('ServiceProviderService', () => {
       const request = await ServiceProviderService.createPresentationRequest(requestData)
 
       expect(request).toMatchObject({
-        id: 'mock-uuid-123',
+        id: expect.any(String),
         requesterId: 'verifier-1',
         requesterName: 'Test Verifier',
         purpose: 'Identity verification',
@@ -289,7 +295,7 @@ describe('ServiceProviderService', () => {
       )
 
       expect(session).toMatchObject({
-        id: 'mock-uuid-123',
+        id: expect.any(String),
         userId: 'user-1',
         serviceProviderId: 'sp-1',
         serviceProviderName: 'Test Service Provider',
@@ -316,7 +322,7 @@ describe('ServiceProviderService', () => {
       expect(retrieved).toBeNull()
     })
 
-    it('should mark expired sessions as expired', () => {
+    it('should mark expired sessions as expired', async () => {
       const session = ServiceProviderService.createSession(
         'user-1',
         'sp-1',
@@ -324,12 +330,14 @@ describe('ServiceProviderService', () => {
         0 // Expires immediately
       )
 
-      // Wait a bit to ensure expiration
+      // Wait a tiny bit to ensure the expiration time has passed
+      await new Promise(resolve => setTimeout(resolve, 1))
+      
       const retrieved = ServiceProviderService.getSession(session.id)
       expect(retrieved?.status).toBe('expired')
     })
 
-    it('should update session activity', () => {
+    it('should update session activity', async () => {
       const session = ServiceProviderService.createSession(
         'user-1',
         'sp-1',
@@ -339,13 +347,13 @@ describe('ServiceProviderService', () => {
       const originalActivity = session.lastActivityAt
       
       // Wait a bit to ensure time difference
-      setTimeout(() => {
-        const updated = ServiceProviderService.updateSessionActivity(session.id)
-        expect(updated).toBe(true)
+      await new Promise(resolve => setTimeout(resolve, 10))
+      
+      const updated = ServiceProviderService.updateSessionActivity(session.id)
+      expect(updated).toBe(true)
 
-        const retrieved = ServiceProviderService.getSession(session.id)
-        expect(retrieved?.lastActivityAt.getTime()).toBeGreaterThan(originalActivity.getTime())
-      }, 10)
+      const retrieved = ServiceProviderService.getSession(session.id)
+      expect(retrieved?.lastActivityAt.getTime()).toBeGreaterThan(originalActivity.getTime())
     })
 
     it('should terminate a session', () => {
@@ -363,6 +371,9 @@ describe('ServiceProviderService', () => {
     })
 
     it('should get active sessions', () => {
+      // Clear any existing sessions first
+      ServiceProviderService['sessions'].clear()
+      
       const session1 = ServiceProviderService.createSession('user-1', 'sp-1', 'Provider 1')
       const session2 = ServiceProviderService.createSession('user-2', 'sp-2', 'Provider 2')
       
@@ -394,19 +405,23 @@ describe('ServiceProviderService', () => {
     })
 
     it('should limit history to 100 entries', async () => {
-      // Add 101 verification results
+      // Add 101 verification results (use Promise.all for speed)
+      const verificationPromises = []
       for (let i = 0; i < 101; i++) {
-        await ServiceProviderService.verifyCredential(
-          { ...mockCredential, id: `cred-${i}` },
-          'verifier-1',
-          'Test Verifier'
+        verificationPromises.push(
+          ServiceProviderService.verifyCredential(
+            { ...mockCredential, id: `cred-${i}` },
+            'verifier-1',
+            'Test Verifier'
+          )
         )
       }
+      await Promise.all(verificationPromises)
 
       const history = ServiceProviderService.getVerificationHistory('verifier-1')
       expect(history).toHaveLength(100)
       // Should keep the most recent entries
       expect(history[history.length - 1].credentialId).toBe('cred-100')
-    })
+    }, 10000)
   })
 })

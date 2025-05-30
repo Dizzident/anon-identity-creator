@@ -18,7 +18,8 @@
       "Bash(npm ls:*)",
       "Bash(timeout 10s npm run dev)",
       "Bash(npm run test:coverage:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(mv:*)"
     ],
     "deny": []
   },
