@@ -3,6 +3,8 @@ import IdentityCreator from './components/IdentityCreator'
 import IdentityList from './components/IdentityList'
 import { StorageConfig } from './components/StorageConfig'
 import { DIDStorageConfig, DIDStorageType } from './components/DIDStorageConfig'
+import { ServiceProvider } from './components/ServiceProvider'
+import { SessionManager } from './components/SessionManager'
 import { Identity, DIDIdentity } from './types/identity'
 import { StorageType, StorageConfig as StorageConfigType } from './types/storage'
 import { createStorageProvider } from './utils/storage'
@@ -14,6 +16,7 @@ function App() {
   const [identities, setIdentities] = useState<Identity[]>([])
   const [didIdentities, setDidIdentities] = useState<DIDIdentity[]>([])
   const [useDIDMode, setUseDIDMode] = useState(true) // Default to new DID mode
+  const [currentTab, setCurrentTab] = useState<'identities' | 'verify' | 'sessions'>('identities')
   const [storageType, setStorageType] = useState<StorageType>('memory')
   const [didStorageType, setDidStorageType] = useState<DIDStorageType>('localStorage')
   const [, setStorageConfig] = useState<Partial<StorageConfigType>>({})
@@ -191,45 +194,89 @@ function App() {
     <div className="app">
       <header className="app-header">
         <h1>Anonymous Identity Manager</h1>
-        <div className="mode-toggle">
-          <label>
-            <input 
-              type="checkbox" 
-              checked={useDIDMode} 
-              onChange={handleModeToggle}
-            />
-            Use DID/VC Mode (New)
-          </label>
+        <div className="header-controls">
+          <div className="mode-toggle">
+            <label>
+              <input 
+                type="checkbox" 
+                checked={useDIDMode} 
+                onChange={handleModeToggle}
+              />
+              Use DID/VC Mode (New)
+            </label>
+          </div>
+          {useDIDMode && (
+            <div className="tab-navigation">
+              <button 
+                className={`tab-btn ${currentTab === 'identities' ? 'active' : ''}`}
+                onClick={() => setCurrentTab('identities')}
+              >
+                👤 Identities
+              </button>
+              <button 
+                className={`tab-btn ${currentTab === 'verify' ? 'active' : ''}`}
+                onClick={() => setCurrentTab('verify')}
+              >
+                🏢 Service Provider
+              </button>
+              <button 
+                className={`tab-btn ${currentTab === 'sessions' ? 'active' : ''}`}
+                onClick={() => setCurrentTab('sessions')}
+              >
+                🔐 Sessions
+              </button>
+            </div>
+          )}
         </div>
       </header>
       <main className="app-main">
         <div className="container">
-          {!useDIDMode ? (
-            <StorageConfig 
-              currentType={storageType} 
-              onTypeChange={handleStorageTypeChange}
-              storageInfo={storageInfo}
-              isDIDMode={false}
-            />
-          ) : (
-            <DIDStorageConfig
-              currentType={didStorageType}
-              onTypeChange={handleDIDStorageTypeChange}
-              storageStats={{
-                identityCount: didIdentities.length,
-                credentialCount: didIdentities.reduce((acc, id) => acc + id.credentials.length, 0),
-                lastSync: new Date()
+          {currentTab === 'identities' && (
+            <>
+              {!useDIDMode ? (
+                <StorageConfig 
+                  currentType={storageType} 
+                  onTypeChange={handleStorageTypeChange}
+                  storageInfo={storageInfo}
+                />
+              ) : (
+                <DIDStorageConfig
+                  currentType={didStorageType}
+                  onTypeChange={handleDIDStorageTypeChange}
+                  storageStats={{
+                    identityCount: didIdentities.length,
+                    credentialCount: didIdentities.reduce((acc, id) => acc + id.credentials.length, 0),
+                    lastSync: new Date()
+                  }}
+                />
+              )}
+              <IdentityCreator onIdentityCreated={handleIdentityCreated} />
+              <IdentityList 
+                identities={useDIDMode ? [] : identities}
+                didIdentities={useDIDMode ? didIdentities : []}
+                useDIDMode={useDIDMode}
+                onDelete={handleDeleteIdentity}
+                onUpdate={handleUpdateIdentity}
+              />
+            </>
+          )}
+          
+          {currentTab === 'verify' && useDIDMode && (
+            <ServiceProvider 
+              identities={didIdentities}
+              onVerificationComplete={(result) => {
+                console.log('Verification completed:', result)
               }}
             />
           )}
-          <IdentityCreator onIdentityCreated={handleIdentityCreated} />
-          <IdentityList 
-            identities={useDIDMode ? [] : identities}
-            didIdentities={useDIDMode ? didIdentities : []}
-            useDIDMode={useDIDMode}
-            onDelete={handleDeleteIdentity}
-            onUpdate={handleUpdateIdentity}
-          />
+          
+          {currentTab === 'sessions' && useDIDMode && (
+            <SessionManager 
+              onSessionSelected={(session) => {
+                console.log('Session selected:', session)
+              }}
+            />
+          )}
         </div>
       </main>
     </div>

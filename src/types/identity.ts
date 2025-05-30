@@ -3,6 +3,9 @@ import type {
   DID 
 } from 'anon-identity/browser';
 
+// Re-export types for use in other modules
+export type { VerifiableCredential, DID };
+
 // Legacy interface for backward compatibility
 export interface Identity {
   id: string;
