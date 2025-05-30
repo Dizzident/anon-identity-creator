@@ -154,6 +154,12 @@ describe('QRCodeModal', () => {
       />
     )
 
+    // Wait for QR code to be generated
+    await waitFor(() => {
+      expect(mockQRCode.toDataURL).toHaveBeenCalled()
+    })
+
+    // Wait for the copy button to appear
     await waitFor(() => {
       expect(screen.getByText('Copy Transfer Data')).toBeInTheDocument()
     })
@@ -161,8 +167,10 @@ describe('QRCodeModal', () => {
     const copyButton = screen.getByText('Copy Transfer Data')
     fireEvent.click(copyButton)
 
-    expect(navigator.clipboard.writeText).toHaveBeenCalled()
-    expect(window.alert).toHaveBeenCalledWith('Transfer data copied to clipboard!')
+    await waitFor(() => {
+      expect(navigator.clipboard.writeText).toHaveBeenCalled()
+      expect(window.alert).toHaveBeenCalledWith('Transfer data copied to clipboard!')
+    })
   })
 
   it('should download QR code', async () => {
