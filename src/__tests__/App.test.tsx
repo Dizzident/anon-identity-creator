@@ -119,22 +119,32 @@ describe('App', () => {
     expect(screen.getByText('Identity 2')).toBeInTheDocument()
   })
 
-  it('displays storage configuration with default memory storage', async () => {
+  it('displays storage configuration with default DID mode', async () => {
     render(<App />)
     
-    expect(screen.getByText('Storage Configuration')).toBeInTheDocument()
-    expect(screen.getByText('Current storage:')).toBeInTheDocument()
-    expect(screen.getByText('memory')).toBeInTheDocument()
+    // App defaults to DID mode
+    expect(screen.getByText('DID Storage Configuration')).toBeInTheDocument()
+    expect(screen.getByText(/\d+ identities/)).toBeInTheDocument()
     
-    const memoryRadio = screen.getByDisplayValue('memory') as HTMLInputElement
-    expect(memoryRadio.checked).toBe(true)
+    // Check that DID mode checkbox is checked
+    const didModeCheckbox = screen.getByRole('checkbox', { name: /Use DID\/VC Mode/i }) as HTMLInputElement
+    expect(didModeCheckbox.checked).toBe(true)
   })
 
   it('changes storage type when radio button is clicked', async () => {
     const user = userEvent.setup()
     render(<App />)
     
-    // Wait for initial render
+    // First switch to legacy mode to see the old storage config
+    const didModeCheckbox = screen.getByRole('checkbox', { name: /Use DID\/VC Mode/i })
+    await user.click(didModeCheckbox)
+    
+    // Confirm the mode switch
+    expect(window.confirm).toHaveBeenCalledWith(
+      'Switching between legacy and DID modes will clear current session. Continue?'
+    )
+    
+    // Wait for storage configuration to appear
     await waitFor(() => {
       expect(screen.getByText('Storage Configuration')).toBeInTheDocument()
     })

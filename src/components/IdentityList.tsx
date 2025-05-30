@@ -1,27 +1,49 @@
-import { Identity } from '../types/identity'
+import { Identity, DIDIdentity } from '../types/identity'
 import IdentityCard from './IdentityCard'
 import './IdentityList.css'
 
 interface IdentityListProps {
   identities: Identity[]
+  didIdentities?: DIDIdentity[]
+  useDIDMode?: boolean
   onDelete: (id: string) => void
+  onUpdate?: (updatedIdentity: DIDIdentity) => void
 }
 
-function IdentityList({ identities, onDelete }: IdentityListProps) {
+function IdentityList({ identities, didIdentities = [], useDIDMode = false, onDelete, onUpdate }: IdentityListProps) {
+  const currentIdentities = useDIDMode ? didIdentities : identities
+  const totalCount = currentIdentities.length
+  
   return (
     <div className="identity-list">
-      <h2>Your Identities</h2>
-      {identities.length === 0 ? (
-        <p className="empty-message">No identities created yet. Create one above!</p>
+      <h2>Your Identities {useDIDMode && <span className="did-badge">DID/VC Mode</span>}</h2>
+      {totalCount === 0 ? (
+        <p className="empty-message">
+          No identities created yet. Create one above!
+          {useDIDMode && <br />}<em>Using {useDIDMode ? 'DID/VC' : 'Legacy'} mode</em>
+        </p>
       ) : (
         <div className="identity-grid">
-          {identities.map((identity) => (
-            <IdentityCard
-              key={identity.id}
-              identity={identity}
-              onDelete={onDelete}
-            />
-          ))}
+          {useDIDMode ? (
+            didIdentities.map((identity) => (
+              <IdentityCard
+                key={identity.id}
+                identity={identity}
+                useDIDMode={true}
+                onDelete={onDelete}
+                onUpdate={onUpdate}
+              />
+            ))
+          ) : (
+            identities.map((identity) => (
+              <IdentityCard
+                key={identity.id}
+                identity={identity}
+                useDIDMode={false}
+                onDelete={onDelete}
+              />
+            ))
+          )}
         </div>
       )}
     </div>

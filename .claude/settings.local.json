@@ -12,7 +12,11 @@
       "Bash(timeout 10 npm run dev)",
       "Bash(rm:*)",
       "Bash(npm view:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(npm show:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(npm ls:*)",
+      "Bash(timeout 10s npm run dev)"
     ],
     "deny": []
   },

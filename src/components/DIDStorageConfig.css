@@ -1,0 +1,272 @@
+.did-storage-config {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.storage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.storage-header h3 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.storage-stats {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.storage-stats span {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.storage-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.storage-option {
+  background: white;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.storage-option:hover {
+  border-color: #28a745;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.1);
+}
+
+.storage-option.selected {
+  border-color: #28a745;
+  background: #f8fff9;
+  box-shadow: 0 2px 12px rgba(40, 167, 69, 0.2);
+}
+
+.option-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.option-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.option-info {
+  flex: 1;
+}
+
+.option-info h4 {
+  margin: 0 0 0.25rem 0;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.option-info p {
+  margin: 0;
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+
+.option-header input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.option-details {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.pros-cons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.pros strong,
+.cons strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.pros ul,
+.cons ul {
+  margin: 0;
+  padding-left: 1.5rem;
+  font-size: 0.813rem;
+  color: #6c757d;
+}
+
+.pros li,
+.cons li {
+  margin: 0.25rem 0;
+}
+
+.hybrid-config {
+  background: #f8f9fa;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.hybrid-config h5 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.875rem;
+  color: #495057;
+}
+
+.hybrid-config label {
+  display: block;
+  padding: 0.25rem 0;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.hybrid-config input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+.advanced-toggle {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  margin: 1rem 0;
+}
+
+.advanced-toggle:hover {
+  background: #5a6268;
+}
+
+.storage-recommendations {
+  background: #e8f4f8;
+  border: 1px solid #bee5eb;
+  border-radius: 6px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+}
+
+.storage-recommendations h4 {
+  margin: 0 0 0.75rem 0;
+  color: #0c5460;
+  font-size: 1rem;
+}
+
+.storage-recommendations ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.storage-recommendations li {
+  margin: 0.5rem 0;
+  color: #0c5460;
+  font-size: 0.875rem;
+}
+
+.storage-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.export-btn,
+.import-btn,
+.clear-btn {
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.export-btn {
+  background: #007bff;
+  color: white;
+}
+
+.export-btn:hover {
+  background: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.import-btn {
+  background: #28a745;
+  color: white;
+}
+
+.import-btn:hover {
+  background: #218838;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.clear-btn {
+  background: #dc3545;
+  color: white;
+}
+
+.clear-btn:hover {
+  background: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .storage-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .storage-stats {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .pros-cons {
+    grid-template-columns: 1fr;
+  }
+  
+  .storage-actions {
+    flex-direction: column;
+  }
+  
+  .storage-actions button {
+    width: 100%;
+  }
+}

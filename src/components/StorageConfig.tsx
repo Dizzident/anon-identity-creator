@@ -6,6 +6,7 @@ interface StorageConfigProps {
   currentType: StorageType
   onTypeChange: (type: StorageType, config?: Partial<StorageConfigType>) => void
   storageInfo?: { hash?: string; txHash?: string; gateway?: string }
+  isDIDMode?: boolean
 }
 
 export function StorageConfig({ currentType, onTypeChange, storageInfo }: StorageConfigProps) {

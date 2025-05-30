@@ -6,6 +6,11 @@
   transition: box-shadow 0.3s ease;
 }
 
+.identity-card.did-mode {
+  border-left: 4px solid #28a745;
+  background: #f8fff9;
+}
+
 .identity-card:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -103,6 +108,8 @@
   border-top: 1px solid #e9ecef;
   display: flex;
   justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .qr-button {
@@ -128,6 +135,58 @@
 
 .qr-button:active {
   transform: translateY(0);
+}
+
+.selective-disclosure-button {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.selective-disclosure-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(40, 167, 69, 0.4);
+}
+
+.selective-disclosure-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.credential-manager-button {
+  background: linear-gradient(135deg, #fd7e14 0%, #dc3545 100%);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(253, 126, 20, 0.3);
+}
+
+.credential-manager-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(253, 126, 20, 0.4);
+}
+
+.credential-manager-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(253, 126, 20, 0.3);
 }
 
 .attributes-header {
@@ -167,4 +226,22 @@
   text-align: right;
   flex: 1;
   font-size: 0.9rem;
+}
+
+/* DID-specific styles */
+.did-note {
+  font-size: 0.8rem;
+  color: #28a745;
+  font-style: italic;
+  margin-left: 8px;
+}
+
+.did-badge {
+  background: #28a745;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: normal;
+  margin-left: 8px;
 }
