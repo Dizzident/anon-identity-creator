@@ -283,25 +283,36 @@ describe('DIDStorageProvider', () => {
     })
 
     it('should save identities to IndexedDB', async () => {
-      const mockAddRequest = { onsuccess: null, onerror: null }
-      const mockClearRequest = { onsuccess: null, onerror: null }
+      // Create mock requests that automatically resolve
+      const mockClearRequest = {
+        onsuccess: null,
+        onerror: null,
+        addEventListener: jest.fn()
+      }
       
-      mockIDBObjectStore.clear.mockReturnValue(mockClearRequest)
-      mockIDBObjectStore.add.mockReturnValue(mockAddRequest)
+      const mockAddRequest = {
+        onsuccess: null,
+        onerror: null,
+        addEventListener: jest.fn()
+      }
+      
+      mockIDBObjectStore.clear.mockImplementation(() => {
+        // Immediately trigger success
+        setTimeout(() => {
+          if (mockClearRequest.onsuccess) mockClearRequest.onsuccess()
+        }, 0)
+        return mockClearRequest
+      })
+      
+      mockIDBObjectStore.add.mockImplementation(() => {
+        // Immediately trigger success for each add
+        setTimeout(() => {
+          if (mockAddRequest.onsuccess) mockAddRequest.onsuccess()
+        }, 0)
+        return mockAddRequest
+      })
 
-      const savePromise = provider.save(mockIdentities)
-
-      // Simulate successful clear
-      setTimeout(() => {
-        if (mockClearRequest.onsuccess) mockClearRequest.onsuccess()
-      }, 0)
-
-      // Simulate successful adds
-      setTimeout(() => {
-        if (mockAddRequest.onsuccess) mockAddRequest.onsuccess()
-      }, 10)
-
-      await savePromise
+      await provider.save(mockIdentities)
 
       expect(mockIDBObjectStore.clear).toHaveBeenCalled()
       expect(mockIDBObjectStore.add).toHaveBeenCalledTimes(2)
@@ -390,19 +401,47 @@ describe('DIDStorageProvider', () => {
     it('should create object store on upgrade', async () => {
       mockIDBDatabase.objectStoreNames.contains.mockReturnValue(false)
 
-      const openRequest = global.indexedDB.open('DIDIdentityDB', 1)
+      // Mock the indexedDB.open to trigger upgrade callback properly
+      const originalOpen = global.indexedDB.open
+      global.indexedDB.open = jest.fn().mockImplementation((name, version) => {
+        const mockOpenRequest = { 
+          onsuccess: null, 
+          onerror: null, 
+          onupgradeneeded: null,
+          result: mockIDBDatabase 
+        }
+        
+        // Simulate upgrade needed event first, then success
+        setTimeout(() => {
+          if (mockOpenRequest.onupgradeneeded) {
+            const upgradeEvent = { target: { result: mockIDBDatabase } }
+            mockOpenRequest.onupgradeneeded(upgradeEvent as any)
+          }
+          // Then success
+          setTimeout(() => {
+            if (mockOpenRequest.onsuccess) {
+              mockOpenRequest.onsuccess()
+            }
+          }, 1)
+        }, 0)
+        
+        return mockOpenRequest
+      })
 
-      // Simulate upgrade needed
-      setTimeout(() => {
-        const upgradeEvent = {
-          target: { result: mockIDBDatabase }
-        }
-        if (openRequest.onupgradeneeded) {
-          openRequest.onupgradeneeded(upgradeEvent as any)
-        }
-      }, 0)
+      // Also need to mock the clear and add operations for save to work
+      mockIDBObjectStore.clear.mockImplementation(() => {
+        const req = { onsuccess: null, onerror: null }
+        setTimeout(() => { if (req.onsuccess) req.onsuccess() }, 0)
+        return req
+      })
+
+      // Trigger the openDB method by trying to save empty data (which should still create the DB)
+      await provider.save([])
 
       expect(mockIDBDatabase.createObjectStore).toHaveBeenCalledWith('identities', { keyPath: 'id' })
+      
+      // Restore original
+      global.indexedDB.open = originalOpen
     })
 
     it('should not create object store if it already exists', async () => {
