@@ -31,7 +31,8 @@ describe('SessionManager', () => {
     Object.defineProperty(global, 'crypto', {
       value: {
         randomUUID: jest.fn().mockReturnValue('mock-uuid-123')
-      }
+      },
+      writable: true
     })
   })
 
@@ -152,9 +153,9 @@ describe('SessionManager', () => {
         userId: 'user-1',
         serviceProviderId: 'sp-1',
         serviceProviderName: 'Test Provider',
-        createdAt: new Date('2023-01-01T00:00:00.000Z'),
-        expiresAt: new Date('2023-01-01T01:00:00.000Z'),
-        lastActivityAt: new Date('2023-01-01T00:00:00.000Z'),
+        createdAt: new Date(),
+        expiresAt: new Date(Date.now() + 3600000), // 1 hour from now
+        lastActivityAt: new Date(),
         status: 'active',
         sharedCredentials: ['cred-1'],
         permissions: ['read_credentials'],

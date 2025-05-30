@@ -16,7 +16,9 @@
       "Bash(npm show:*)",
       "WebFetch(domain:github.com)",
       "Bash(npm ls:*)",
-      "Bash(timeout 10s npm run dev)"
+      "Bash(timeout 10s npm run dev)",
+      "Bash(npm run test:coverage:*)",
+      "Bash(grep:*)"
     ],
     "deny": []
   },

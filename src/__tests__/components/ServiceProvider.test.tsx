@@ -234,6 +234,11 @@ describe('ServiceProvider', () => {
   it('should disable create request button when required fields are missing', () => {
     render(<ServiceProvider identities={mockIdentities} />)
     
+    // Clear the pre-filled fields to test the disabled state
+    fireEvent.change(screen.getByLabelText('Verifier ID:'), {
+      target: { value: '' }
+    })
+    
     const createButton = screen.getByText('📋 Create Presentation Request')
     expect(createButton).toBeDisabled()
   })
